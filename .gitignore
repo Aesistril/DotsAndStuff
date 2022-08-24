@@ -1,0 +1,15 @@
+/* Ignore Everything */
+*
+
+/* Don't ignore gitignore */
+!.gitignore
+
+/* Add .config/lvim/config.lua */
+!.config/
+.config/*
+!.config/lvim/
+.config/lvim/*
+!.config/lvim/config.lua
+
+/* Add Scripts/ */
+!Scripts/
