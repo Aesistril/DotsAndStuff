@@ -11,6 +11,7 @@
 .config/lvim/*
 !.config/lvim/config.lua
 
-/* Add Scripts/ */
 !Scripts
 !Scripts/*
+
+!.bashrc
