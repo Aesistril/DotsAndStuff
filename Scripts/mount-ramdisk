@@ -1,0 +1,4 @@
+#!/bin/bash
+mkdir ~/ramdisk
+sudo mount -t tmpfs -o size=$1 ramdisk ~/ramdisk && echo "ramdisk mounted to ~/ramdisk"
+sudo chmod 777 -R ~/ramdisk && echo "changed permissions for ~/ramdisk to 777"

@@ -1,0 +1,82 @@
+#!/bin/bash
+
+LABELS_FILE=~/.resolution-labels
+
+function receive_label_declare_statement {
+    awk -F '=' 'BEGIN {ORS=" "}
+    { 
+        gsub(/[ \t]+/, "", $1); 
+        gsub(/[ \t]+/, "", $2);
+        print "[" $1 "]=" $2
+    }' $LABELS_FILE
+}
+
+function echo_help {
+    echo "Usage: $0 [<output>] <mode>"
+    echo
+    echo '<output> defines one of the outputs xrandr will knows. If omitted, the first'
+    echo ' connected output will be used (as defined in xrandr).'
+    echo
+    echo -e "<mode> can either be WxH$HELP_LABELS_TEXT"
+    echo
+    echo 'Manage labels in ~/.resolution-labels.'
+}
+
+
+if [[ -r $LABELS_FILE ]]
+then
+    eval 'declare -A LABELS=('`receive_label_declare_statement`')'
+    HELP_LABELS_TEXT=" one of these labels:"
+    for K in "${!LABELS[@]}"; do HELP_LABELS_TEXT="$HELP_LABELS_TEXT\n $K (${LABELS[$K]})"; done
+else
+    declare -A LABELS
+    HELP_LABELS_TEXT=" a label.\nYou haven't defined any labels, yet."
+fi
+
+if [[ $# == 1 ]]
+then
+    OUTPUT=`xrandr | grep ' connected' | cut -d ' ' -f 1 | head -n1`
+    RES=$1
+
+    if [[ -z $OUTPUT ]]
+    then
+       >&2 echo "Couldn't detect any connected output."
+       exit 1
+    fi
+elif [[ $# == 2 ]]
+then
+    OUTPUT=$1
+    RES=$2
+
+    if [[ -z `xrandr | grep "$1 connected"` ]]
+    then
+        >&2 echo "Output invalid and/or not connected. Please choose another one."
+        exit 1
+    fi
+else
+    echo_help
+    exit 1
+fi
+
+if ! [[ -z ${LABELS[$RES]} ]]
+then
+    RES=${LABELS[$RES]}
+fi
+
+pattern='^[0-9]+x[0-9]+$'
+if ! [[ $RES =~ $pattern ]]
+then
+    echo_help
+    exit 1
+fi
+W=`echo $RES | sed 's/x.*//'`
+H=`echo $RES | sed 's/.*x//'`
+
+
+if [[ -z `xrandr | grep ${W}x${H}` ]]
+then
+    xrandr --newmode ${W}x${H} `cvt $W $H | tail -n1 | sed 's/Modeline//; s/".*"//'`
+    xrandr --addmode Virtual1 ${W}x${H}
+fi
+
+xrandr --output Virtual1 --mode ${W}x${H}

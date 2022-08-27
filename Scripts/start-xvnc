@@ -1,0 +1,2 @@
+#!/bin/bash
+x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth /home/yigit/.vnc/passwd -rfbport 5900 -shared -snapfb -ncache_cr

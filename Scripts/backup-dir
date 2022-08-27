@@ -1,0 +1,31 @@
+#!/bin/bash
+
+backup_date=$(date +"%d.%m.%Y")
+read -p 'Directory to backup (Without the last "/"):' backdir
+read -p "Output directory:" outdir
+read -p "Email of the GPG key owner:" gpgkey
+read -p "Do you want to upload the backup to Google Drive (y/n)? " drive_choice
+dirname=${backdir##*/}
+
+tar -c $backdir | pv -s $(du -sb $backdir | awk '{print $1}') > $outdir/$dirname$backup_date.tar
+# tar -cvf $outdir/$dirname$backup_date.tar $backdir 
+echo -e "\e[33mGenerating md5sum for the .tar file\e[0m"
+md5sum $outdir/$dirname$backup_date.tar > $outdir/$dirname$backup_date.md5
+echo -e "\e[33mCompressing the the .tar archive\e[0m"
+pigz -9 $outdir/$dirname$backup_date.tar 
+echo -e "\e[33mGenerating md5sum for the .tar.gz file\e[0m"
+md5sum $outdir/$dirname$backup_date.tar.gz >> $outdir/$dirname$backup_date.md5
+echo -e "\e[33mEncrypting...\e[0m"
+gpg --encrypt -r $gpgkey $outdir/$dirname$backup_date.tar.gz
+rm $outdir/$dirname$backup_date.tar.gz
+echo -e "\e[33mGenerating md5sum for the .tar.gz.gpg file\e[0m"
+md5sum $outdir/$dirname$backup_date.tar.gz.gpg >> $outdir/$dirname$backup_date.md5
+
+case "$drive_choice" in 
+  y|Y ) echo -e "\e[33mUploading to Google Drive\e[0m" && rclone copy $outdir/$dirname$backup_date.md5 gdrive:backups && rclone -P copy $outdir/$dirname$backup_date.tar.gz.gpg gdrive:backups;;
+  n|N ) echo "";;
+  * ) echo "Invalid input";;
+esac
+
+notify-send -a "Backup Script" "Backup has been completed!" -i emblem-synchronizing
+

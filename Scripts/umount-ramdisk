@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo umount ramdisk && echo "unmounted successfully"
+rm -rf ~/ramdisk && echo "removed ramdisk directory"

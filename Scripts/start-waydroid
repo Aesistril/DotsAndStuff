@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo systemctl start waydroid-container
+sudo waydroid container start
+waydroid session start
