@@ -1,0 +1,23 @@
+add_newline = false
+
+format="""
+$username[@](green bold)$hostname $all"""
+
+[username]
+style_user = "green bold"
+style_root = "red bold"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+
+[hostname]
+ssh_only = false
+format = "[$hostname](bold green)"
+disabled = false
+
+
+[directory]
+style="bold blue"
+truncation_length = 2
+read_only=""
