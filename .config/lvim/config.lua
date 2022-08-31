@@ -165,10 +165,8 @@ lvim.plugins = {
     config = function() require "lsp_signature".on_attach() end,
   },
   {
-    'mfussenegger/nvim-dap'
-  },
-  {
-    "rcarriga/nvim-dap-ui"
+    "rcarriga/nvim-dap-ui",
+    requires = { "mfussenegger/nvim-dap" }
   },
   --     {"folke/tokyonight.nvim"},
   --     {
