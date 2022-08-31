@@ -15,4 +15,5 @@ alias pp="powerpill"
 export MAKEFLAGS="-j8"
 
 alias clswap="sudo swapoff -a && sudo swapon -a"
-################### Custom bashrc #################
+
+eval "$(thefuck --alias)"
