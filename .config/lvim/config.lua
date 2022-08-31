@@ -164,6 +164,12 @@ lvim.plugins = {
     event = "BufRead",
     config = function() require "lsp_signature".on_attach() end,
   },
+  {
+    'mfussenegger/nvim-dap'
+  },
+  {
+    "rcarriga/nvim-dap-ui"
+  },
   --     {"folke/tokyonight.nvim"},
   --     {
   --       "folke/trouble.nvim",
